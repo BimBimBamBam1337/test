@@ -16,7 +16,7 @@ class SQLUserRepository(AbstractUserRepository):
         return result.scalar() is not None
 
     async def create(self, entity: User) -> User:
-        user_orm = UserMapper.to_orm(entity)
+        user_orm = UserORM.from_entitu(entity)
         self.session.add(user_orm)
         await self.session.flush()
         return entity

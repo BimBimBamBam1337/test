@@ -19,7 +19,7 @@ class SQLChannelRepository(AbstractChannelRepository):
         return result.scalar() is not None
 
     async def create(self, entity: Channel) -> Channel:
-        channel_orm = ChannelMapper.to_orm(entity)
+        channel_orm = ChannelORM.to_orm(entity)
         self.session.add(channel_orm)
         await self.session.flush()
         return entity

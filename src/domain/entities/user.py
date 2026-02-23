@@ -18,11 +18,17 @@ class User:
     created_at: datetime
 
     @classmethod
-    def create(cls, tg_data) -> "User":
+    def create(
+        cls,
+        id: int,
+        role: UserRole,
+        name: str,
+        username: str,
+    ) -> "User":
         return cls(
-            id=tg_data.id,
+            id=id,
             role=UserRole.USER,
-            name=tg_data.name,
-            username=tg_data.username,
+            name=name,
+            username=username,
             created_at=datetime.now(),
         )

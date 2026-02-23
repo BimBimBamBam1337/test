@@ -16,23 +16,20 @@ class ChannelType(Enum):
 @dataclass
 class Channel:
     id: int
-    language: Language
     title: str
-    type: ChannelType | None
-    link: str
-    is_verified: bool
     is_scam: bool
     created_at: datetime
 
     @classmethod
-    def create(cls, tg_data) -> "Channel":
+    def create(
+        cls,
+        id: int,
+        title: str,
+        is_scam: bool,
+    ) -> "Channel":
         return cls(
-            id=tg_data.id,
-            language=Language.RU,
-            title=tg_data.title,
-            type=None,
-            link=tg_data.link,
-            is_verified=False,
-            is_scam=False,
+            id=id,
+            title=title,
+            is_scam=is_scam,
             created_at=datetime.now(),
         )

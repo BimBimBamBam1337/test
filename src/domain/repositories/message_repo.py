@@ -7,7 +7,7 @@ from src.domain.entities import Message
 class AbstractMessageRepository(ABC):
 
     @abstractmethod
-    async def add_message(self, message) -> Message:
+    async def add_message(self, message: Message) -> Message:
         pass
 
     @abstractmethod

@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import BIGINT, DateTime, Enum, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.domain.entities import UserRole
+from src.domain.entities import UserRole, User
 
 from .base import Base
 
@@ -18,3 +18,13 @@ class UserORM(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=func.now(), nullable=False
     )
+
+    @staticmethod
+    def from_entity(entity: User) -> "UserORM":
+        return UserORM(
+            id=entity.id,
+            role=entity.role,
+            name=entity.name,
+            username=entity.username,
+            created_at=entity.created_at,
+        )
