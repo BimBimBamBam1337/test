@@ -1,0 +1,30 @@
+[project]
+name = "news-poster-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "greenlet>=3.3.1",
+    "kurigram>=2.2.18",
+    "loguru>=0.7.3",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.12.0",
+    "sqlalchemy>=2.0.46",
+    "telethon>=1.42.0",
+    "tgcrypto>=1.2.5",
+]
+
+[tool.alembic]
+script_location = "%(here)s/src/infra/databases/sql/migration"
+prepend_sys_path = [
+    "."
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
+
