@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import BIGINT, DateTime, Enum, ForeignKey, func
+from sqlalchemy import BIGINT, DateTime, Enum, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.domain.entities import UserRole, User
@@ -13,8 +13,10 @@ class UserORM(Base):
 
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False)
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
-    username: Mapped[str] = mapped_column(unique=True, nullable=False)
+    first_name: Mapped[str] = mapped_column(String(32), nullable=True)
+    last_name: Mapped[str] = mapped_column(String(32), nullable=True)
+    full_name: Mapped[str] = mapped_column(String(32), nullable=True)
+    username: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=func.now(), nullable=False
     )
@@ -24,7 +26,11 @@ class UserORM(Base):
         return UserORM(
             id=entity.id,
             role=entity.role,
-            name=entity.name,
+            first_name=entity.first_name,
+            last_name=entity.last_name,
+            full_name=(
+                entity.first_name if entity.first_name and entity.last_name else None
+            ),
             username=entity.username,
             created_at=entity.created_at,
         )

@@ -4,6 +4,7 @@ from typing import Literal
 
 class Settings(BaseSettings):
     dev_mode: bool
+    token: str
     api_id: str
     api_hash: str
     postgres_dsn: str

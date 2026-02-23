@@ -12,7 +12,9 @@ class PyroUserMapper:
         return User(
             id=user.id,
             role=UserRole.USER,
-            name=user.name,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            full_name=user.first_name if user.first_name and user.last_name else None,
             username=user.username,
             created_at=datetime.now(),
         )

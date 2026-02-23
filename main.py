@@ -2,15 +2,13 @@ import asyncio
 
 from loguru import logger
 
-from src.config import app
+from src.config import user_bot, bot
 from loguru import logger
 from pyrogram import filters
 from pyrogram.client import Client
 from pyrogram.enums import ParseMode
-from pyrogram.types import Message
-from pyrogram.types import ChatMemberUpdated
+from pyrogram.types import ChatJoinRequest, Message, ChatMemberUpdated
 
-from src.config import app
 from src.infra.databases.sql.uow import SQLAlchemyUnitOfWork
 from src.presentation.telegram.mappers import (
     PyroMessageMapper,
@@ -20,26 +18,9 @@ from src.presentation.telegram.mappers import (
 from src.infra.databases.sql.session import SessionFactory
 
 
-@app.on_chat_member_updated()
-async def registre_channel(
-    client: Client, event: ChatMemberUpdated, uow: SQLAlchemyUnitOfWork
-):
-    if event.new_chat_member and event.new_chat_member.user.is_self:
-        async with uow:
-            try:
-                entity = PyroChannelMapper.to_entity(event.chat)
-                channel = await uow.channel_repo.get_by_id(entity.id)
-                if channel is None:
-                    channel = await uow.channel_repo.create(entity)
-                    logger.success("Successfully added a channel")
-            except Exception as e:
-                logger.error("An error ocured: {}", e)
-
-
-@app.on_chat_member_updated()
-async def delete_channel(
-    client: Client, event: ChatMemberUpdated, uow: SQLAlchemyUnitOfWork
-):
+@bot.on_chat_member_updated()
+async def delete_channel(client: Client, event: ChatMemberUpdated):
+    uow = SQLAlchemyUnitOfWork(session_factory=SessionFactory)
     me = event.new_chat_member.user.is_self
     status = event.new_chat_member.status
     if not me:
@@ -55,7 +36,7 @@ async def delete_channel(
                 logger.error("An error ocured: {}", e)
 
 
-@app.on_message(filters.private & ~filters.bot, group=-1)
+@user_bot.on_message(filters.private & ~filters.bot, group=-1)
 async def handler_new_message(
     client: Client,
     message: Message,
@@ -68,7 +49,7 @@ async def handler_new_message(
         logger.debug(f"Новое сообщение: {db_message}")
 
 
-@app.on_deleted_messages()
+@user_bot.on_deleted_messages()
 async def handler_message_deleted(client: Client, messages):
     """Обработка удаленных сообщений."""
     admins = [8140271247]
@@ -115,7 +96,7 @@ id = <b>{old_message.id}</b>
                         )
 
 
-@app.on_edited_message(filters.me)
+@user_bot.on_edited_message(filters.me)
 async def handler_message_edited(
     client: Client,
     message: Message,
@@ -166,22 +147,35 @@ async def handler_message_edited(
                     logger.error(f"Не удалось отправить сообщение админу {admin}: {e}")
 
 
-# async def main():
-#     while True:
-#         try:
-#             await app.start()
-#
-#         except Exception as e:
-#             logger.exception("Main loop crashed, restarting in 5 sec")
-#
-#         finally:
-#             try:
-#                 await app.stop()
-#             except:
-#                 pass
-#
-#             await asyncio.sleep(5)
+@bot.on_chat_join_request(group=1)
+async def new_members(client, message):
+    logger.info(message)
+
+
+@user_bot.on_chat_member_updated()
+async def member_changed(client: Client, chat_member: ChatMemberUpdated):
+    old = chat_member.old_chat_member
+    new = chat_member.new_chat_member
+
+    # пользователь ушёл
+    if old.status in ["member", "restricted"] and new.status == "left":
+        user = chat_member.from_user
+        await client.send_message(chat_id=user.id, text="hello")
+
+    # пользователь зашёл
+    if old.status in ["left", "kicked"] and new.status in ["member", "restricted"]:
+        user = chat_member.from_user
+        await client.send_message(chat_id=user.id, text="goodbye")
+
+
+async def main():
+    await asyncio.gather(bot.start(), user_bot.start())
+
+    print("Both clients started!")
+
+    await asyncio.Event().wait()
 
 
 if __name__ == "__main__":
-    app.run(use_qr=True)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

@@ -1,2 +1,2 @@
 from .settings import settings
-from .client import app
+from .client import user_bot, bot

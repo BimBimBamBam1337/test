@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 
-class UserRole(Enum):
+class UserRole(str, Enum):
     ADMIN = "admin"
     SUPERUSER = "superuser"
     USER = "user"
@@ -13,7 +13,9 @@ class UserRole(Enum):
 class User:
     id: int
     role: UserRole
-    name: str
+    first_name: str
+    last_name: str
+    full_name: str | None
     username: str
     created_at: datetime
 
@@ -22,13 +24,17 @@ class User:
         cls,
         id: int,
         role: UserRole,
-        name: str,
+        first_name: str,
+        last_name: str,
+        full_name: str,
         username: str,
     ) -> "User":
         return cls(
             id=id,
             role=UserRole.USER,
-            name=name,
+            first_name=first_name,
+            last_name=last_name,
+            full_name=first_name if first_name and last_name else None,
             username=username,
             created_at=datetime.now(),
         )
