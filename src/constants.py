@@ -6,16 +6,17 @@ __all__ = [
     "LOGS_DIR",
     "IGNORE_LIST",
     "BASE_DIR",
-    "NO_DATE_LIST",
+    "CONFIG_DIR",
 ]
 
 
 BASE_DIR = Path(__file__).parent.parent
 
 DATA_DIR = BASE_DIR / "data"
+SRC_DIR = BASE_DIR / "src"
 
 SESSIONS_DIR = DATA_DIR / "sessions"
 LOGS_DIR = DATA_DIR / "logs"
 
 IGNORE_LIST = DATA_DIR / "ignore_list.json"
-NO_DATE_LIST = DATA_DIR / "no_date_users.json"
+CONFIG_DIR = SRC_DIR / "config"
