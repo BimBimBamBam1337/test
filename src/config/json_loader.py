@@ -8,4 +8,3 @@ def load_json(filename: str) -> dict:
 
 
 MESSAGES = load_json("messages.json")
-print(MESSAGES)
