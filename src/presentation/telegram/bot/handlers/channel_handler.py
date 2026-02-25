@@ -1,7 +1,7 @@
 from loguru import logger
 
 from loguru import logger
-from 
+from pyrogram.client import Client 
 from pyrogram.types import ChatJoinRequest, ChatMemberUpdated
 
 from src.infra.databases.sql.uow import SQLAlchemyUnitOfWork
