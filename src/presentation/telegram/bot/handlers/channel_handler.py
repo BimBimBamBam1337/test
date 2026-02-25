@@ -3,7 +3,7 @@ from loguru import logger
 from loguru import logger
 from pyrogram.client import Client 
 from pyrogram.types import ChatJoinRequest, ChatMemberUpdated
-
+from src.config import user_bot
 from src.infra.databases.sql.uow import SQLAlchemyUnitOfWork
 from src.presentation.telegram.mappers import (
     PyroChannelMapper,
@@ -17,9 +17,7 @@ async def member_changed(client: Client, chat_member: ChatMemberUpdated):
     old = chat_member.old_chat_member
     new = chat_member.new_chat_member
     if new:
-        user = chat_member.from_user
-        await client.send_message(chat_id=user.id, text="hello")
+        await user_bot.send_message(chat_id=new.user.id, text="hello")
 
     if old:
-        user = chat_member.from_user
-        await client.send_message(chat_id=user.id, text="goodbye")
+        await user_bot.send_message(chat_id=old.user.id, text="goodbye")
