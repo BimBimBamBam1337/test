@@ -2,14 +2,14 @@ import asyncio
 from pyrogram import Client, idle
 from loguru import logger
 
-from src.config import create_user, create_bot
+from src.config import bot_client, user_bot_client
 from src.bot.bot import Bot
 from src.user_bot.user_bot import UserBot
 
 
 async def main():
-    bot = Bot(create_bot(), check_join_request=True)
-    user_bot = UserBot(create_user(), check_missing_messages=True)
+    bot = Bot(bot_client, check_join_request=True)
+    user_bot = UserBot(user_bot_client, check_missing_messages=True)
 
     await bot.client.start()
     await user_bot.client.start()
@@ -23,4 +23,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

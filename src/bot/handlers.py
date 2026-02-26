@@ -6,6 +6,7 @@ from pyrogram.client import Client
 from pyrogram.types import ChatJoinRequest, ChatMemberUpdated, ChatJoiner
 
 from conf import HELLO_MSG, GOODBYE_MSG, CHANNEL
+from src.config import user_bot_client
 from src.database.repositories import MessageRepository, UserRepository
 from src.database.models import Message, User
 from src.database.session import SessionFactory
@@ -62,7 +63,9 @@ async def new_member(
 ):
     if join_request.chat.id == CHANNEL:
         await join_request.approve()
-        await client.send_message(chat_id=join_request.from_user.id, text=HELLO_MSG)
+        await user_bot_client.send_message(
+            chat_id=join_request.from_user.id, text=HELLO_MSG
+        )
         logger.info(
             f"Юзер {join_request.from_user.id} присоеденился в канал: {join_request.chat.id}"
         )
@@ -70,6 +73,6 @@ async def new_member(
 
 async def member_changed(client: Client, chat_member: ChatMemberUpdated):
     if chat_member.old_chat_member:
-        await client.send_message(
+        await user_bot_client.send_message(
             chat_id=chat_member.old_chat_member.user.id, text=GOODBYE_MSG
         )
