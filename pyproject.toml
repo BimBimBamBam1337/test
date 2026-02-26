@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [tool.alembic]
-script_location = "%(here)s/src/infra/databases/sql/migration"
+script_location = "%(here)s/src/database/migration"
 prepend_sys_path = [
     "."
 ]
