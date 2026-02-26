@@ -8,13 +8,15 @@ from src.user_bot.user_bot import UserBot
 
 
 async def main():
-    bot = Bot(bot_client, check_join_request=True)
-    user_bot = UserBot(user_bot_client, check_missing_messages=True)
+    bot = Bot(bot_client)
+    user_bot = UserBot(user_bot_client, check_join_request=True)
 
     await bot.client.start()
     await user_bot.client.start()
 
     logger.info("Clients started")
+
+    asyncio.create_task(user_bot.start())
 
     await idle()
 

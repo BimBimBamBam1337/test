@@ -30,11 +30,11 @@ class Message(Base):
     updated_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     @staticmethod
-    def to_orm(message: PyroMessage) -> "Message":
-
+    def from_pyro(message: PyroMessage) -> "Message":
+        print(message)
         if message.text is None and message.caption is None:
             raise ValueError("Message text is empty")
-        outgoing = message.from_user.is_self
+        outgoing = message.from_user.is_self if message.from_user else message.outgoing
         direction = "out" if outgoing else "in"
 
         if message.outgoing:

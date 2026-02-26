@@ -8,6 +8,7 @@ from .handlers import (
     handler_message_edited,
     handler_message_deleted,
     fetch_missing_messages,
+    polling_chat_request,
 )
 
 handlers = [
