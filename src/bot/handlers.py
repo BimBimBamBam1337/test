@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 from pyrogram.client import Client
 from pyrogram.types import ChatJoinRequest, ChatMemberUpdated, ChatJoiner
 
-from conf import HELLO_MSG, GOODBYE_MSG
-from src.config import create_user
+from conf import HELLO_MSG, GOODBYE_MSG, CHANNEL
 from src.database.repositories import MessageRepository, UserRepository
 from src.database.models import Message, User
 from src.database.session import SessionFactory
@@ -58,13 +57,15 @@ async def polling_chat_request(client: Client):
 
 
 async def new_member(
+    client: Client,
     join_request: ChatJoinRequest,
-    client: Client = create_user(),
 ):
-    if join_request.chat.id == 123:
+    if join_request.chat.id == CHANNEL:
         await join_request.approve()
         await client.send_message(chat_id=join_request.from_user.id, text=HELLO_MSG)
-        logger.info(join_request)
+        logger.info(
+            f"Юзер {join_request.from_user.id} присоеденился в канал: {join_request.chat.id}"
+        )
 
 
 async def member_changed(client: Client, chat_member: ChatMemberUpdated):
